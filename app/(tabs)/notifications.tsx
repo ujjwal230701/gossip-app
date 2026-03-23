@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-export default function FeedScreen() {
+export default function NotificationsScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Feed</ThemedText>
-      <ThemedText>Local gossip within 5 km appears here.</ThemedText>
+      <ThemedText type="title">Notifications</ThemedText>
+      <ThemedText>See replies, reactions, and moderation updates.</ThemedText>
     </ThemedView>
   );
 }

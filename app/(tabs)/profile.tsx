@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-export default function FeedScreen() {
+export default function ProfileScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Feed</ThemedText>
-      <ThemedText>Local gossip within 5 km appears here.</ThemedText>
+      <ThemedText type="title">Profile</ThemedText>
+      <ThemedText>Manage your anonymous identity and activity.</ThemedText>
     </ThemedView>
   );
 }

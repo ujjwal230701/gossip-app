@@ -16,23 +16,65 @@ No test framework is configured yet.
 
 ## Architecture
 
-**Expo Router (file-based routing)** — `app/` maps directly to routes:
-- `app/_layout.tsx` — Root layout; wraps everything in React Navigation's `ThemeProvider`
-- `app/(tabs)/` — Tab group with bottom navigation (Home + Explore)
-- Route files become URL paths; `_layout.tsx` files define layout boundaries
+This is a location-based anonymous gossip app for India targeting users aged 18-35, launching first on college campuses.
 
-**Theme system** — Three-layer pattern:
-1. `constants/theme.ts` — Color palette for light/dark modes
-2. `hooks/use-theme-color.ts` — Hook that reads current scheme and allows per-component overrides
-3. `ThemedText` / `ThemedView` in `components/` — Wrappers that consume the hook
+### Product Goals
 
-**Cross-platform patterns:**
-- Platform-specific files use suffixes: `.ios.ts`, `.web.ts` (e.g., `use-color-scheme.web.ts`, `icon-symbol.ios.tsx`)
-- Icons: SF Symbols on iOS (`icon-symbol.ios.tsx`), Material Icons fallback on Android/Web (`icon-symbol.tsx`)
-- The bundler automatically picks the right file at build time
+- Real-time local campus/community gossip with low-friction posting.
+- Anonymous participation while still enforcing strong safety constraints.
+- Hyperlocal relevance: show content from within a 5 km radius.
+- Ephemeral conversations: posts expire after 24 hours.
 
-**Path aliases** — `@/*` resolves to the project root (configured in `tsconfig.json`). Use `@/components/...`, `@/constants/...`, etc. instead of relative paths.
+### Tech Stack
 
-**Animations** — `react-native-reanimated` + `react-native-gesture-handler`. New React Native Architecture is enabled; do not mix legacy animated APIs.
+- **Frontend:** Expo (React Native) + Expo Router.
+- **Backend/Data/Auth:** Supabase.
+- **Routing:** File-based routing via Expo Router (`app/`).
 
-**React Compiler** is enabled (`experiments.reactCompiler` in `app.json`) — avoid manual `useMemo`/`useCallback` for performance optimization; the compiler handles it.
+### Core Screens
+
+- `Feed` - Primary local feed (within 5 km) sorted by recency/relevance.
+- `Post` - Create a new gossip post (anonymous identity).
+- `Profile` - Anonymous profile/history and activity summary.
+- `Notifications` - Reactions, replies, moderation updates, and mentions.
+- `Gossip Detail` - Full thread view with comments and reactions.
+
+### Data Model (Supabase)
+
+Core tables expected in the schema:
+
+- `users` - Anonymous user record keyed to device identity.
+- `posts` - Gossip posts with location metadata and expiry timestamp.
+- `comments` - Replies on posts.
+- `reactions` - Lightweight engagement (likes/emojis/upvotes as defined).
+- `flags` - User/system moderation reports and review state.
+
+### Identity and Privacy
+
+- User identity is anonymous and tied to a device UUID.
+- Do not expose personally identifying details in UI or API responses.
+- Treat device UUID as sensitive data; never log raw identifiers in plaintext.
+
+### Location and Feed Rules
+
+- Feed queries must only return posts within a 5 km radius of the user GPS point.
+- Post creation should capture location data needed for radius queries.
+- If location permission is unavailable, fail gracefully and guide users to enable it.
+
+### Expiry Rules
+
+- Every post expires 24 hours after creation.
+- Expired posts should be excluded from default feed/detail queries.
+- Background cleanup or query-level filtering must enforce expiry consistently.
+
+### Content Moderation (India-Specific)
+
+Block or remove content that includes:
+
+- Defamation.
+- Religious targeting or hate directed at religions.
+- Caste-based targeting/abuse.
+- Threats or incitement of violence.
+- Personal/sensitive information (doxxing, phone/address/ID leaks).
+
+Moderation should combine automated checks plus user flagging through `flags`.
