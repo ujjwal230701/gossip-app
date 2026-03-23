@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/Ujjwal/gossip-app -maxdepth 1 -type f -name *.md -o -name .cursorrules -o -name .env*)",
+      "Bash(git -C /c/Users/Ujjwal/gossip-app log --oneline)",
+      "Bash(git -C \"C:\\\\Users\\\\Ujjwal\\\\gossip-app\" add CLAUDE.md)",
+      "Bash(git -C:*)"
+    ]
+  }
+}
